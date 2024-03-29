@@ -4,16 +4,24 @@ import "../vendor/jquery-nice-select/css/nice-select.css"
 import "../vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
 import "../vendor/swiper/css/swiper-bundle.min.css"
 import "../css/style.css"
+import Footer from "./Footer";
+import NavHeader from "./NavHeader";
+import Header from "./Header";
+import NavMenu from "./NavMenu";
 
 
 export default function ProductDetail(){
     return(
         <div> 
+               <NavHeader/>
+               <Header/>
+                <div className={"d-flex"}>
+                    <NavMenu/>
             <div className="content-body">
         <div className="container">
             <div className="row page-titles">
                 <ol className="breadcrumb">
-                    <li className="breadcrumb-item active"><a href="javascript:void(0)">Layout</a></li>
+                    <li className="breadcrumb-item active"><a href="javasc~ript:void(0)">Layout</a></li>
                     <li className="breadcrumb-item"><a href="javascript:void(0)">Blank</a></li>
                 </ol>
             </div>
@@ -23,7 +31,7 @@ export default function ProductDetail(){
                         <div className="card-body">
                             <div className="row">
                                 <div className="col-xl-3 col-lg-6  col-md-6 col-xxl-5 ">
-
+                                   
                                     <div className="tab-content" id="nav-tabContent">
                                       <div className="tab-pane fade show active" id="nav-first" role="tabpanel" aria-labelledby="nav-first-tab">
                                         <img className="img-fluid rounded" src="https://freepngimg.com/thumb/food/4-2-food-png.png" alt=""/>
@@ -55,10 +63,10 @@ export default function ProductDetail(){
                                       </div>
                                     </nav>
                                 </div>
-
+                                
                                 <div className="col-xl-9 col-lg-6  col-md-6 col-xxl-7 col-sm-12">
                                     <div className="product-detail-content">
-
+                                        
                                         <div className="new-arrival-content pr">
                                             <h4>Solid Women's V-neck Dark T-Shirt</h4>
                                             <div className="comment-review star-rating">
@@ -88,8 +96,8 @@ export default function ProductDetail(){
                                             <p className="text-content">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.
                                                 If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing.</p>
                                             <div className="d-flex align-items-end flex-wrap mt-4">
-
-
+                                                
+                                                
                                                 <div className="filtaring-area me-3">
                                                     <div className="size-filter">
                                                         <h4 className="m-b-15">Select size</h4>
@@ -102,21 +110,21 @@ export default function ProductDetail(){
 
                                                           <input type="radio" className="btn-check" name="btnradio" id="btnradio3"/>
                                                           <label className="btn btn-outline-primary sharp sharp-lg" for="btnradio3">MD</label>
-
+                                                          
                                                           <input type="radio" className="btn-check" name="btnradio" id="btnradio4"/>
                                                           <label className="btn btn-outline-primary sharp sharp-lg" for="btnradio4">LG</label>
-
+                                                          
                                                           <input type="radio" className="btn-check" name="btnradio" id="btnradio5"/>
                                                           <label className="btn btn-outline-primary sharp sharp-lg" for="btnradio5">XL</label>
                                                         </div>
-
+                                                        
                                                     </div>
                                                 </div>
-
+                                            
                                                 <div className="col-2 px-0  mb-2 me-3">
                                                     <input type="number" name="num" className="form-control input-btn input-number" value="1"/>
                                                 </div>
-
+                                                
                                                 <div className="shopping-cart  mb-2 me-3">
                                                     <a className="btn btn-primary" href=""><i
                                                             className="fa fa-shopping-basket me-2"></i>Add
@@ -130,7 +138,7 @@ export default function ProductDetail(){
                         </div>
                     </div>
                 </div>
-
+                
                 <div className="modal fade" id="reviewModal">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
@@ -146,7 +154,7 @@ export default function ProductDetail(){
                                     </div>
                                     <div className="mb-3">
                                         <div className="rating-widget mb-4 text-center">
-
+                                            
                                             <div className="rating-stars">
                                                 <ul id="stars">
                                                     <li className="star" title="Poor" data-value="1">
@@ -179,8 +187,10 @@ export default function ProductDetail(){
                 </div>
             </div>
         </div>
-    </div>
+            </div>
+            </div>
+            <Footer/>
         </div>
-
+        
     )
 }

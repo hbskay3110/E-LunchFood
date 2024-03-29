@@ -4,23 +4,62 @@ import "../vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css"
 import "../vendor/swiper/css/swiper-bundle.min.css"
 import "../vendor/bootstrap-select/dist/css/bootstrap-select.min.css"
 import "../css/style.css"
+import Footer from "./Footer";
+import NavHeader from "./NavHeader";
+import Header from "./Header";
+import NavMenu from "./NavMenu";
 
 
+import { useState, useEffect } from "react";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { useSelector } from "react-redux";
+const ProductList=(props)=>{
+	const[products,setProducts] = useState([]);
+	const[query,setQuery] = useState("");
+	const [currentPage, setCurrentPage] = useState(1);
+  	const [itemsPerPage, setItemsPerPage] = useState(2);
 
-export default function ProductList(){
-    return(
-        <div>
-        <div className="content-body">
-
-			<div className="container">
-				<div className="d-flex align-items-center justify-content-between mb-4">
-					<div className="input-group search-area2 style-1">
-						<span className="input-group-text p-0"><a href="javascript:void(0)"><svg  className="me-1" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M27.414 24.586L22.337 19.509C23.386 17.928 24 16.035 24 14C24 8.486 19.514 4 14 4C8.486 4 4 8.486 4 14C4 19.514 8.486 24 14 24C16.035 24 17.928 23.386 19.509 22.337L24.586 27.414C25.366 28.195 26.634 28.195 27.414 27.414C28.195 26.633 28.195 25.367 27.414 24.586ZM7 14C7 10.14 10.14 7 14 7C17.86 7 21 10.14 21 14C21 17.86 17.86 21 14 21C10.14 21 7 17.86 7 14Z" fill="#FC8019"/>
-						</svg>
-						</a></span>
-						<input type="text" className="form-control p-0" placeholder="What do you want eat today..."/>
-					</div>
+	
+	useEffect(()=>{
+		async function fetchPostList(){
+			const requestUrl = "http://localhost:3000/products";
+			// gửi một yêu cầu HTTP GET đến url
+			const reponse  =  await fetch(requestUrl);
+			//chuyển đổi phản hồi thành đối tượng JSON
+			const reponseJson = await reponse.json();
+			//cập nhật giá trị của products
+			setProducts(reponseJson);
+		} 
+		fetchPostList()
+	},[])
+	const handleSearchChange = (searchValue) => {
+		setQuery(searchValue);
+		
+	  };
+	  // danh sách sản phẩm tìm kiếm
+	  const filteredProducts = products.filter(
+		(productitem) =>
+		  productitem.name.toLowerCase().includes(query.toLowerCase()) ||
+		  productitem.des.toLowerCase().includes(query.toLowerCase())
+	  );
+	  // vị trí đầu và cuối của danh sách
+	  const indexOfLastItem = currentPage * itemsPerPage;
+	  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	  // lấy ra danh sách
+	  const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+	  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+      const product = useSelector(state=> state.root.products)
+	
+	console.log(product)
+        return (
+            <div className="content-body">
+              <NavHeader/>
+               <Header  onSearchChange={handleSearchChange}/>
+                <div className={"d-flex"}>
+                    <NavMenu/>
+					<div className="container">
+					<div className="d-flex align-items-center justify-content-between mb-4">
+				
 					<ul className="grid-tab nav nav-pills" id="list-tab" role="tablist">
 					  <li className="nav-item" role="presentation">
 						<button className="nav-link me-3" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-list" type="button" role="tab" aria-controls="pills-list" aria-selected="true">
@@ -45,7 +84,7 @@ export default function ProductList(){
 					  </li>
 					</ul>
 				</div>
-
+				
 				<div className="tab-content" id="pills-tabContent">
 					<div className="tab-pane fade" id="pills-list" role="tabpanel" aria-labelledby="pills-list-tab">
 						<div className="card h-auto">
@@ -357,329 +396,11 @@ export default function ProductList(){
 					</div>
 					<div className="tab-pane fade show active" id="pills-grid" role="tabpanel" aria-labelledby="pills-grid-tab">
 						<div className="row">
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card dishe-bx b-hover style-1">
-										<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/pic-3.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Cheese Burger</h4></a>
-												<h3 className=" mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card dishe-bx b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/pic-1.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Fish Burger</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card dishe-bx b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-pointer c-heart"></i>
-									<div className="card-body pt-3 pb-0">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/pic-2.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="page-error-404.html"><h4>Beef Burger</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card dishe-bx b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-pointer c-heart"></i>
-
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/pic-4.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-0">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Double Burger</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card review b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/review-img/pic-1.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="'font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Pepperoni Pizza</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-													<a href="javascript:void(0);"></a>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card review b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/review-img/pic-2.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="font-w500 mb-1">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Japanese Ramen</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card review b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/review-img/pic-3.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4 className="mb-1 font-w500">Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Fried Rice</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="col-xl-3 col-xxl-4 col-sm-6">
-								<div className="card review b-hover style-1">
-									<i className="fa-solid fa-heart ms-auto c-pointer c-heart"></i>
-									<div className="card-body pb-0 pt-3">
-										<div className="text-center mb-2">
-											<img src="images/popular-img/review-img/pic-4.jpg" alt=""/>
-										</div>
-										<div className="border-bottom pb-3">
-											<h4>Fast Food Resto</h4>
-											<div className="d-flex align-items-center">
-												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
-												</svg>
-												<p className="font-w500 mb-0 px-2">5.0</p>
-												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className=" font-w500 mb-0">1k+ Reviews</p>
-												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
-												</svg>
-												<p className="font-w500 mb-0">2.97km</p>
-
-											</div>
-										</div>
-									</div>
-									<div className="card-footer border-0 pt-2">
-										<div className="common d-flex align-items-center justify-content-between" >
-											<div>
-												<a href="javascript:void(0);"><h4>Vegan Pizza</h4></a>
-												<h3 className="mb-0 text-primary">$5.59</h3>
-											</div>
-											<div className="plus c-pointer">
-												<div className="sub-bx">
-
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+						
+                        {currentItems.map((productitem)=>(
+                            <Product key={productitem.id} id={productitem.id} name={productitem.name} price={productitem.price} img={productitem.img} des={productitem.des}></Product>
+                        ))}
+							
 							<div className="d-flex align-items-center justify-content-xl-between justify-content-center flex-wrap pagination-bx">
 								<div className="mb-sm-0 mb-3 pagination-title">
 									<p className="mb-0"><span>Showing 1-5</span> from <span>100</span> data</p>
@@ -690,11 +411,12 @@ export default function ProductList(){
 											<a className="page-link" href="javascript:void(0)">
 												<i className="la la-angle-left"></i></a>
 										</li>
-										<li className="page-item active"><a className="page-link" href="javascript:void(0)">1</a>
+										{Array.from({ length: Math.ceil(filteredProducts.length / itemsPerPage) }).map((_, index) => (
+										<li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+											<a className="page-link" href="javascript:void(0)" onClick={() => paginate(index + 1)}>{index + 1}</a>
+										
 										</li>
-										<li className="page-item"><a className="page-link" href="javascript:void(0)">2</a></li>
-
-										<li className="page-item"><a className="page-link" href="javascript:void(0)">3</a></li>
+										))}
 										<li className="page-item page-indicator">
 											<a className="page-link" href="javascript:void(0)">
 												<i className="la la-angle-right"></i></a>
@@ -705,8 +427,59 @@ export default function ProductList(){
 						</div>
 					</div>
 				</div>
-			</div>
+					</div>
+				</div>
+				<Footer/>
 		</div>
-        </div>
-    )
+         
+        )
+    
 }
+const Product  =(prop)=>{
+    const [product,setProduct] =useState(prop)
+   
+        return (
+            <div className="col-xl-3 col-xxl-4 col-sm-6">
+								<div className="card dishe-bx b-hover style-1">
+										<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
+									<div className="card-body pb-0 pt-3">
+										<div className="text-center mb-2">
+											<img src={product.img} alt=""/>
+										</div>
+										<div className="border-bottom pb-3">
+											<h4 className="font-w500 mb-1">{product.des}</h4>
+											<div className="d-flex align-items-center">
+												<svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<path d="M8 0.500031L9.79611 6.02789H15.6085L10.9062 9.4443L12.7023 14.9722L8 11.5558L3.29772 14.9722L5.09383 9.4443L0.391548 6.02789H6.20389L8 0.500031Z" fill="#FC8019"/>
+												</svg>
+												<p className="font-w500 mb-0 px-2">5.0</p>
+												<svg className="me-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<circle cx="2" cy="2.50003" r="2" fill="#C4C4C4"/>
+												</svg>
+												<p className=" font-w500 mb-0">1k+ Reviews</p>
+												<svg className="mx-2" width="4" height="5" viewBox="0 0 4 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<circle cx="2" cy="2.5" r="2" fill="#C4C4C4"/>
+												</svg>
+										
+
+											</div>
+										</div>
+									</div>
+									<div className="card-footer border-0 pt-2">
+										<div className="common d-flex align-items-center justify-content-between" >
+											<div>
+												<a href="javascript:void(0);"><h4>{product.name}</h4></a>
+												<h3 className=" mb-0 text-primary">{product.price} đ</h3>
+											</div>
+											<div className="plus c-pointer">
+												<div className="sub-bx">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+        );
+    
+}
+export default ProductList
