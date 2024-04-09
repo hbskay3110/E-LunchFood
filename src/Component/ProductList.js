@@ -9,16 +9,19 @@ import NavHeader from "./NavHeader";
 import Header from "./Header";
 import NavMenu from "./NavMenu";
 
-
+import { fetchData, getData } from '../data/ProductData';
 import { useState, useEffect } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { addCart } from "../Store/Action";
+import { Link } from "react-router-dom";
 const ProductList=(props)=>{
 	const[products,setProducts] = useState([]);
 	const[query,setQuery] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
   	const [itemsPerPage, setItemsPerPage] = useState(2);
-
+	  
 	
 	useEffect(()=>{
 		async function fetchPostList(){
@@ -49,8 +52,9 @@ const ProductList=(props)=>{
 	  const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 	  const paginate = (pageNumber) => setCurrentPage(pageNumber);
       const product = useSelector(state=> state.root.products)
-	
-	console.log(product)
+
+	  
+	// console.log(product)
         return (
             <div className="content-body">
               <NavHeader/>
@@ -437,11 +441,20 @@ const ProductList=(props)=>{
 }
 const Product  =(prop)=>{
     const [product,setProduct] =useState(prop)
-   
+	const dispatch = useDispatch();
+	// sự kiện click để thêm product vào cart
+	const handleAddCardClick = () => {
+		dispatch(addCart(product,1));
+	}
+	const numberWithCommas = (number) => {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      };
         return (
             <div className="col-xl-3 col-xxl-4 col-sm-6">
 								<div className="card dishe-bx b-hover style-1">
 										<i className="fa-solid fa-heart ms-auto c-heart c-pointer"></i>
+									
+									<Link to={`/product/${product.id}` }  state={{ product: product }}>
 									<div className="card-body pb-0 pt-3">
 										<div className="text-center mb-2">
 											<img src={product.img} alt=""/>
@@ -465,13 +478,14 @@ const Product  =(prop)=>{
 											</div>
 										</div>
 									</div>
+									</Link>
 									<div className="card-footer border-0 pt-2">
 										<div className="common d-flex align-items-center justify-content-between" >
 											<div>
 												<a href="javascript:void(0);"><h4>{product.name}</h4></a>
-												<h3 className=" mb-0 text-primary">{product.price} đ</h3>
+												<h3 className=" mb-0 text-primary">{numberWithCommas(product.price)} đ</h3>
 											</div>
-											<div className="plus c-pointer">
+											<div className="plus c-pointer" onClick={handleAddCardClick}>
 												<div className="sub-bx">
 												</div>
 											</div>
